@@ -1,0 +1,5 @@
+Trait,PGS ID,Our LD-Aware Score,pgsc_calc Score,Our Coverage (%),pgsc_calc Match Rate (%),Note
+Type 2 Diabetes,PGS002308,0.392,0.436,99.96,48.34,pgsc_calc uses fewer variants (no imputation)
+Alzheimer's Disease,PGS004034,1.622,1.678,99.97,53.08,Similar scores despite coverage difference
+Body Mass Index,PGS000027,38.638,17.717,99.99,51.57,Significant difference due to variant coverage
+Coronary Artery Disease,PGS004237,-0.270,-0.259,99.96,52.40,Similar scores

@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.venv/
+
+# Large intermediate data (keep summary results only)
+data/
+results/PGS*.txt
+results/pgsc_calc/trent_pgs.txt.gz
+results/pgsc_calc/trent_popsimilarity.txt.gz
+results/pgsc_calc/match/trent_log.csv.gz
+results/pgsc_calc/match/*.scorefile.gz
+
+# Downloaded PGS files (large, can re-download)
+scores/
+
+# Binary executables (install separately)
+plink2
+plink2_linux_x86_64_latest.zip
+nextflow
+nextflow_installer.sh
+vcf_subset
+intel-simplified-software-license.txt
+
+# Nextflow pipeline artifacts
+.nextflow/
+.nextflow.log
+work/
+prs_normalized/
+nxf-tmp.*
+
+# External references (symlinks)
+reference/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.ipynb_checkpoints/
+
+# Additional visualizations (keep summary ones only)
+results/contribution_distributions.png
+results/variant_sources.png

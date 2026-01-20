@@ -1,0 +1,2 @@
+MATCH_COMBINE:
+    pgscatalog.match: 0.3.3
