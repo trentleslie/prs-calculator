@@ -25,6 +25,176 @@ Both approaches calculate PRS by summing weighted effect alleles, but differ sig
 
 ---
 
+## Visual Workflow Comparison
+
+### Custom Script (`pgs_calculator.py`)
+
+```mermaid
+flowchart TB
+    subgraph INPUTS["📥 INPUTS"]
+        VCF["VCF File<br/>(variant calls)"]
+        PGS["PGS Scoring File<br/>(from Catalog)"]
+        REF["Reference Genome<br/>(hg38 FASTA)"]
+    end
+
+    subgraph STEP1["Step 1: Obtain Score File"]
+        DL{"--pgs-file<br/>provided?"}
+        USE["Use provided file"]
+        FETCH["Download from<br/>PGS Catalog API"]
+    end
+
+    subgraph STEP2["Step 2: Parse Score File"]
+        PARSE["Extract columns:<br/>chr, pos, effect_allele,<br/>other_allele, weight"]
+        BUILD1["Build lookup dict:<br/>(chr, pos) → PGSVariant"]
+    end
+
+    subgraph STEP3["Step 3: Load Reference"]
+        CHECK["Check FASTA + index"]
+        LOAD_REF["Stream into memory<br/>(~3GB RAM)"]
+    end
+
+    subgraph STEP4["Step 4: Load VCF"]
+        PARSE_VCF["Parse all variants"]
+        BUILD2["Build lookup dict:<br/>(chr, pos) → VCFVariant"]
+    end
+
+    subgraph STEP5["Step 5: Calculate Score"]
+        LOOP["For each PGS variant"]
+        IN_VCF{"Position<br/>in VCF?"}
+        VCF_PATH["VCF Path:<br/>Match effect allele<br/>Calculate dosage"]
+        REF_PATH["Reference Path:<br/>Assume homozygous ref<br/>Dosage = 0 or 2"]
+        CALC["contribution = dosage × weight"]
+        SUM["Sum all contributions"]
+    end
+
+    subgraph STEP6["Step 6: Output"]
+        RESULTS["Results TSV:<br/>per-variant details"]
+        SCORE["Total PGS Score"]
+    end
+
+    VCF --> STEP4
+    PGS --> STEP1
+    REF --> STEP3
+
+    DL -->|Yes| USE
+    DL -->|No| FETCH
+    USE --> PARSE
+    FETCH --> PARSE
+    PARSE --> BUILD1
+    BUILD1 --> LOOP
+
+    CHECK --> LOAD_REF
+    LOAD_REF --> LOOP
+
+    PARSE_VCF --> BUILD2
+    BUILD2 --> LOOP
+
+    LOOP --> IN_VCF
+    IN_VCF -->|Yes| VCF_PATH
+    IN_VCF -->|No| REF_PATH
+    VCF_PATH --> CALC
+    REF_PATH --> CALC
+    CALC --> SUM
+
+    SUM --> RESULTS
+    SUM --> SCORE
+
+    style INPUTS fill:#e1f5fe
+    style STEP5 fill:#fff3e0
+    style STEP6 fill:#e8f5e9
+```
+
+### pgsc_calc Pipeline
+
+```mermaid
+flowchart TB
+    subgraph INPUTS["📥 INPUTS"]
+        PLINK["PLINK2 Files<br/>(pgen/pvar/psam)"]
+        SHEET["Samplesheet.csv"]
+        CONFIG["nextflow.config"]
+        REFPANEL["Reference Panel<br/>(HGDP+1kGP)"]
+    end
+
+    subgraph STAGE1["Stage 1: Setup"]
+        VALIDATE["Validate samplesheet"]
+        DOWNLOAD["Download PGS files<br/>from Catalog FTP"]
+    end
+
+    subgraph STAGE2["Stage 2: Variant Matching"]
+        MATCH["Map sample variants<br/>to PGS variants"]
+        COVERAGE["Report coverage %"]
+    end
+
+    subgraph STAGE3["Stage 3: Harmonization"]
+        STRAND["Check allele strand"]
+        FLIP["Flip alleles if needed"]
+        IMPUTE["Handle missing variants"]
+    end
+
+    subgraph STAGE4["Stage 4: PGS Calculation"]
+        CALC_PGS["Score = Σ(weight × dosage)"]
+        CONTRIB["Generate per-variant<br/>contributions"]
+    end
+
+    subgraph STAGE5["Stage 5: Ancestry Analysis"]
+        PCA["PCA projection onto<br/>reference panel"]
+        ASSIGN["Assign to nearest<br/>superpopulation"]
+        RF["Calculate RF probabilities<br/>(EUR, AFR, EAS, etc.)"]
+    end
+
+    subgraph STAGE6["Stage 6: Normalization"]
+        ZSCORE["Calculate Z-scores<br/>vs assigned population"]
+        PCTILE["Convert to percentiles"]
+    end
+
+    subgraph OUTPUTS["📤 OUTPUTS"]
+        PGS_OUT["pgs.txt.gz<br/>(raw + normalized scores)"]
+        POP_OUT["popsimilarity.txt.gz<br/>(ancestry analysis)"]
+        REPORT["report.html<br/>(interactive viz)"]
+        AGG["aggregated_scores.txt.gz"]
+    end
+
+    PLINK --> STAGE1
+    SHEET --> VALIDATE
+    CONFIG --> VALIDATE
+
+    VALIDATE --> DOWNLOAD
+    DOWNLOAD --> MATCH
+    MATCH --> COVERAGE
+    COVERAGE --> STRAND
+    STRAND --> FLIP
+    FLIP --> IMPUTE
+    IMPUTE --> CALC_PGS
+    CALC_PGS --> CONTRIB
+
+    REFPANEL --> PCA
+    CONTRIB --> PCA
+    PCA --> ASSIGN
+    ASSIGN --> RF
+    RF --> ZSCORE
+    ZSCORE --> PCTILE
+
+    PCTILE --> PGS_OUT
+    PCTILE --> POP_OUT
+    PCTILE --> REPORT
+    PCTILE --> AGG
+
+    style INPUTS fill:#e1f5fe
+    style STAGE5 fill:#f3e5f5
+    style OUTPUTS fill:#e8f5e9
+```
+
+### Key Differences Visualized
+
+| Aspect | Custom Script | pgsc_calc |
+|--------|---------------|-----------|
+| **Flow Complexity** | 6 sequential steps | 7 parallel-capable stages |
+| **Missing Variants** | Reference genome lookup | Statistical imputation |
+| **Ancestry Handling** | None | Full PCA + normalization |
+| **Output Granularity** | Per-variant TSV | Aggregated + normalized |
+
+---
+
 ## Handling Missing Variants
 
 This is the most critical difference between the approaches.
