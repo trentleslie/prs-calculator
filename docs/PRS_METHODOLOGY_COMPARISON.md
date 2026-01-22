@@ -244,9 +244,75 @@ The custom script offers complete transparency at the cost of some accuracy. pgs
 
 ---
 
+## PGS Quality Validation Findings
+
+Based on validation work by Lee Rowen (January 2026), not all PGS Catalog scores are equally trustworthy.
+
+### The Problem
+
+When Lee systematically evaluated 7 coronary artery disease (CAD) PGS scores, **only ~2 of 7 were clearly trustworthy**. The field has quality control issues that aren't immediately apparent.
+
+### Validation Techniques
+
+#### 1. REF/ALT Ratio Checking
+
+Suspicious scores often have unusual ratios of effect alleles being REF vs ALT:
+
+```
+Trustworthy PGS: ~50% effect allele = ALT, ~50% effect allele = REF
+Suspicious PGS:  >80% effect allele = ALT (or vice versa)
+```
+
+A heavily skewed ratio suggests the score may have been created with inconsistent allele coding.
+
+#### 2. Biology Direction Validation
+
+For well-understood genetics, verify the score matches expected biology:
+
+| Gene | Expected Direction | Validation |
+|------|-------------------|------------|
+| APOE ε4 | Increases AD risk | Score should show positive weight for ε4 |
+| ADH1B*2 | Decreases alcoholism risk | Score should show protective effect |
+| BRCA1 pathogenic | Increases cancer risk | Score should show increased risk |
+
+If a score shows APOE ε4 as protective, something is wrong with the scoring file.
+
+#### 3. Coding Scheme Identification
+
+Different PGS scores use different conventions:
+
+| Convention | Effect Allele | Interpretation |
+|------------|---------------|----------------|
+| Risk allele coding | Higher = more risk | Most intuitive |
+| Effect allele coding | May be protective or risk | Check sign carefully |
+| Odds ratio direction | >1 = increased risk | Log-transform for comparison |
+
+This makes comparing raw scores across different PGS IDs treacherous.
+
+### Recommendations
+
+1. **Don't blindly trust PGS Catalog scores** - validate before clinical interpretation
+2. **Check REF/ALT ratios** in scoring files as a quality signal
+3. **Verify biology direction** for known high-impact variants
+4. **Use multiple PGS for same trait** and check for concordance
+5. **Prefer LD-aware methods** (LDpred, PRS-CS) over simple clumping+thresholding
+6. **Read the original paper** - PGS Catalog is a repository, not a validation authority
+
+### Implications
+
+The PRS field is **not ready for clinical prime time** without careful validation. For personal genomics projects:
+
+- Treat PRS results as hypothesis-generating, not diagnostic
+- Focus on well-validated scores from large consortium studies
+- Cross-reference with known high-penetrance variants (APOE, BRCA, etc.)
+- Consider effect sizes - even "high risk" PRS may have modest clinical impact
+
+---
+
 ## References
 
 - [PGS Catalog](https://www.pgscatalog.org/)
 - [pgsc_calc Documentation](https://pgsc-calc.readthedocs.io/)
 - [HGDP+1kGP Reference Panel](https://www.internationalgenome.org/)
 - [GRCh38 vs GRCh37 Differences](https://www.ncbi.nlm.nih.gov/grc/human)
+- [pgsc_calc Quickstart Guide](PGSC_CALC_QUICKSTART.md) - Single VCF workflow

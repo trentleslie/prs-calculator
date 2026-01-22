@@ -21,12 +21,20 @@ PRS/
 ├── scores/             # Downloaded PGS Catalog files
 ├── results/            # Calculated risk scores
 ├── docs/
-│   ├── PGS_SETUP_GUIDE.md  # Detailed setup instructions
-│   └── screenshots/        # Visual documentation
+│   ├── PGSC_CALC_QUICKSTART.md   # pgsc_calc single VCF guide
+│   ├── PRS_METHODOLOGY_COMPARISON.md  # Method comparison + validation
+│   ├── PGS_SETUP_GUIDE.md        # Detailed setup instructions
+│   └── screenshots/              # Visual documentation
 └── reference/          # Symlink to hg38 reference genome
 ```
 
 ## Quick Start
+
+### Using pgsc_calc (Recommended)
+
+For ancestry-normalized PRS with GRCh38 data, see the **[pgsc_calc Quickstart Guide](docs/PGSC_CALC_QUICKSTART.md)** - complete step-by-step instructions for running on a single VCF file.
+
+### Using Custom Script (Educational/Debugging)
 
 ```bash
 # Install dependencies
@@ -43,6 +51,8 @@ uv run python src/pgs_calculator.py \
 uv run python src/pgs_calculator.py --list-available
 ```
 
+**Note**: Always validate PGS scores before clinical interpretation. See [PGS Quality Validation](docs/PRS_METHODOLOGY_COMPARISON.md#pgs-quality-validation-findings) for techniques.
+
 ## PGS Catalog
 
 The PGS Catalog (https://www.pgscatalog.org/) provides standardized polygenic scores for various traits.
@@ -55,6 +65,8 @@ The PGS Catalog (https://www.pgscatalog.org/) provides standardized polygenic sc
 | PGS004034 | Alzheimer's Disease | LDpred2-auto | 1,046,908 | Monti R et al., AJHG (2024) |
 | PGS000027 | Body Mass Index | LDpred | 2,100,302 | Khera AV et al., Cell (2019) |
 | PGS004237 | Coronary Artery Disease | LDpred | 1,146,511 | Manikpurage HD et al. (2021) |
+| PGS005236 | Coronary Artery Disease | AnnoPred | 2,994,055 | Hu J et al., PLoS Comp Bio (2025) |
+| PGS001355 | Coronary Artery Disease | AnnoPred | 2,994,055 | Ye Y et al., Circ Genom Prec Med (2021) |
 
 ### LD-Aware Method Selection (Critical)
 
