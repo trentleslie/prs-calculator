@@ -280,6 +280,40 @@ nextflow run pgscatalog/pgsc_calc \
     -profile docker
 ```
 
+### INTERSECT_THINNED Fails on Cloud Platforms (Issue #410)
+
+**Cause**: File staging bug when using `--run_ancestry` on cloud HPC environments (UKB-RAP, All of Us, etc.)
+
+**Symptoms**:
+- Pipeline fails at `ANCESTRY_PROJECT:INTERSECT_THINNED` step
+- Error: "No such file or directory" for `.pgen`, `.prune.in.gz`, or `_matched.txt.gz` files
+- Work directory is empty or missing expected symlinks
+
+**Affected environments**:
+- UK Biobank Research Analysis Platform (UKB-RAP)
+- All of Us Researcher Workbench
+- Other cloud-based HPCs with scratch/staging filesystems
+
+**Fix**: Use the patched fork that removes `scratch true` directive:
+
+```bash
+# Use patched version instead of official release
+nextflow run ashenfernando1/pgsc_calc \
+    -r no_scratch_true_rename_true \
+    --input samplesheet.csv \
+    --pgs_id PGS002308 \
+    --run_ancestry pgsc_HGDP+1kGP_v1.tar.zst \
+    --target_build GRCh38 \
+    -profile docker
+```
+
+**References**:
+- [GitHub Issue #410](https://github.com/PGScatalog/pgsc_calc/issues/410) - Full discussion
+- [Patched fork](https://github.com/ashenfernando1/pgsc_calc/tree/no_scratch_true_rename_true)
+- [Patched Docker image](https://hub.docker.com/r/ashfernando/pgsc_calc_patch)
+
+**Note**: This issue does **not** affect local Docker/Conda runs. Our single-sample WGS workflow runs successfully on local machines.
+
 ---
 
 ## Example: Full Workflow
