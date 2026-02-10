@@ -76,13 +76,13 @@ This creates a systematic bias because:
 The bias percentage is calculated as:
 
 ```
-Bias (%) = (VCF_only_score - Adjusted_score) / Adjusted_score × 100
+Bias (%) = (Adjusted_score - VCF_only_score) / |VCF_only_score| × 100
 ```
 
 **Example (BMI):**
-- VCF-only score: 38.64
-- Adjusted score: 17.72
-- Bias: (38.64 - 17.72) / 17.72 × 100 = **+118.1%**
+- VCF-only score: 17.72 (lower because positive weights from ref-lookup variants are ignored)
+- Adjusted score: 38.64 (correct, includes all variants)
+- Bias: (38.64 - 17.72) / |17.72| × 100 = **+118.1%**
 
 ![Bias Heatmap](figures/bias_heatmap.png)
 *Figure 4: Bias patterns are consistent across samples for each PGS score*
@@ -184,9 +184,9 @@ To validate that bias is pipeline-independent and not an artifact of our specifi
 
 | Metric | Trent (GRCh38) | Rowen (GRCh37) |
 |--------|----------------|----------------|
-| BMI Bias | +118% | +118% |
-| CHD Sign Flip | Yes | Yes |
-| CAD Bias | -13% | -12% |
+| BMI Bias | +118% | +117% |
+| CHD Bias | -435% | -2137% |
+| CAD Bias | -4% | +2% |
 
 ![Bias Comparison](figures/trent_vs_rowan_bias_comparison.png)
 *Figure 10: Bias patterns are consistent between GRCh38 (Trent) and GRCh37 (Rowen)*
@@ -241,24 +241,23 @@ Reference panel choice is not just a technical detail—it fundamentally affects
 | Score | VCF-Only Interpretation | Adjusted Interpretation | Clinical Error |
 |-------|------------------------|------------------------|----------------|
 | CHD | Protective | Elevated Risk | **Sign Reversal** |
-| T2D | Protective | Elevated Risk | **Sign Reversal** |
-| BMI | Higher | Lower | >100% bias |
-| HDL | Lower | Higher | >50% bias |
-| CAD | Slightly lower | Correct | Minimal bias |
+| BMI | Lower | Higher | >100% bias |
+| T2D | Higher | Lower | Moderate bias |
+| CAD | Correct | Correct | Minimal bias |
+| Alzheimer's | Correct | Correct | Minimal bias |
 
-### Scores by Reliability
+### Scores by Reliability (Based on 5-Score Analysis)
 
 **High Reliability (bias <20%):**
-- PGS004237 (CAD) — bias: -13%
-- PGS000302 (AnnoPred_LDL) — bias: +8%
+- PGS004237 (CAD) — Trent: -4%, Rowen: +2%
+- PGS004034 (Alzheimer's) — Trent: -3%, Rowen: 0%
 
 **Moderate Reliability (bias 20-50%):**
-- PGS004306 (HDL) — bias: +41%
+- PGS002308 (Type 2 Diabetes) — Trent: -10%, Rowen: -24%
 
 **Low Reliability (bias >50% or sign flip):**
-- PGS000027 (BMI) — bias: +118%
-- PGS004696 (CHD) — bias: -2137%, sign flip
-- PGS000036 (T2D) — bias: -87%, sign flip
+- PGS000027 (BMI) — Trent: +118%, Rowen: +117%
+- PGS004696 (CHD) — Trent: -435%, Rowen: -2137% (sign flip in both)
 
 ---
 
