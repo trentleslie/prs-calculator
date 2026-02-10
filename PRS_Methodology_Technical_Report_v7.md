@@ -2,7 +2,6 @@
 
 ## Systematic Bias in Whole Genome Sequencing-Based Polygenic Risk Score Calculations
 
-**Author:** Trent Leslie
 **Date:** February 2026
 **Version:** 7.0
 
