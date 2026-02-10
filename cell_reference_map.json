@@ -1,0 +1,177 @@
+{
+  "setup-1": {
+    "section": "Setup & Data Loading",
+    "title": "Configuration and Imports",
+    "finding": "Color scheme and figure styling configured for publication-quality output",
+    "figure": null
+  },
+  "setup-2": {
+    "section": "Setup & Data Loading",
+    "title": "Load Pre-computed Results",
+    "finding": "10 records loaded: 2 samples \u00d7 5 PGS scores",
+    "table": "Table 1: Comprehensive Bias Analysis"
+  },
+  "exec-1": {
+    "section": "Executive Summary",
+    "title": "Bias Magnitude Overview",
+    "finding": "Bias ranges from +118% (BMI underestimate) to -2137% (CHD overestimate)",
+    "figure": "figures/bias_magnitude_bar.png"
+  },
+  "exec-2": {
+    "section": "Executive Summary",
+    "title": "Sign-Flip Demonstration",
+    "finding": "Rowen CHD score flips from +0.0369 to -0.7509 (protective to risk)",
+    "figure": "figures/sign_flip_demo.png"
+  },
+  "valid-1": {
+    "section": "Method Validation",
+    "title": "Load Comparison Data",
+    "finding": "pgsc_calc and custom script scores loaded for comparison",
+    "table": null
+  },
+  "valid-2": {
+    "section": "Method Validation",
+    "title": "Method Equivalence Test",
+    "finding": "Maximum difference between methods = 0.001221",
+    "table": "Table 2: Method Comparison"
+  },
+  "valid-3": {
+    "section": "Method Validation",
+    "title": "Validation Scatter Plot",
+    "finding": "All points fall on identity line, confirming mathematical equivalence",
+    "figure": "figures/method_validation_scatter.png"
+  },
+  "bias-1": {
+    "section": "Homozygous Reference Bias",
+    "title": "Variant Source Breakdown",
+    "finding": "47-52% of scoring variants are NOT in the VCF (require reference lookup)",
+    "table": "Table 3: Variant Sources"
+  },
+  "bias-2": {
+    "section": "Homozygous Reference Bias",
+    "title": "Bias Formula Demonstration",
+    "finding": "BMI bias = +118.1% calculated from (38.64 - 17.72) / 17.72 \u00d7 100",
+    "equation": "Equation 1"
+  },
+  "bias-3": {
+    "section": "Homozygous Reference Bias",
+    "title": "Bias Heatmap",
+    "finding": "Bias patterns are consistent across samples for each PGS score",
+    "figure": "figures/bias_heatmap.png"
+  },
+  "direction-1": {
+    "section": "Why Direction Varies",
+    "title": "BMI Case Study (Underestimate)",
+    "finding": "BMI shows +118% underestimate due to effect allele distribution in REF-lookup variants",
+    "table": null
+  },
+  "direction-2": {
+    "section": "Why Direction Varies",
+    "title": "CHD Case Study (Overestimate)",
+    "finding": "CHD shows -2137% overestimate with complete sign reversal",
+    "table": null
+  },
+  "direction-3": {
+    "section": "Why Direction Varies",
+    "title": "Variant Source Visualization",
+    "finding": "~50% of variants come from reference lookup but bias direction varies by score",
+    "figure": "figures/variant_source_breakdown.png"
+  },
+  "ancestry-1": {
+    "section": "Ancestry Normalization Limitation",
+    "title": "Z-Scores and Percentiles",
+    "finding": "Ancestry-normalized scores appear reasonable but mask underlying bias",
+    "table": null
+  },
+  "ancestry-2": {
+    "section": "Ancestry Normalization Limitation",
+    "title": "Mathematical Demonstration",
+    "finding": "Z-scores cancel uniform bias but don't fix individual-level variation or sign flips",
+    "equation": "Equation 2"
+  },
+  "trent-mid-ancestry": {
+    "section": "Ancestry Normalization Limitation",
+    "title": "Trent MID Ancestry Analysis",
+    "finding": "10D PCA shows Trent closer to EUR (21 units) than MID (41 units), but 32% MID reflects genuine admixture from Druze/Palestinian/Bedouin populations",
+    "figure": "figures/trent_mid_ancestry_analysis.png"
+  },
+  "variant-1": {
+    "section": "Variant-Level Investigation",
+    "title": "Variant Count vs Bias",
+    "finding": "No correlation between variant count and bias magnitude",
+    "figure": "figures/variant_count_vs_bias.png"
+  },
+  "variant-2": {
+    "section": "Variant-Level Investigation",
+    "title": "Variant Source Breakdown",
+    "finding": "All scores have similar ref-lookup rates (~47-52%)"
+  },
+  "variant-3": {
+    "section": "Variant-Level Investigation",
+    "title": "Weight Sum Analysis",
+    "finding": "effect_ref_lookup weight sum \u00d7 2 = exact bias amount",
+    "figure": "figures/effect_ref_lookup_weights.png"
+  },
+  "variant-4": {
+    "section": "Variant-Level Investigation",
+    "title": "Weight Sum Visualization",
+    "finding": "Weight direction determines bias direction (positive\u2192underestimate, negative\u2192overestimate)"
+  },
+  "variant-5": {
+    "section": "Variant-Level Investigation",
+    "title": "Mathematical Explanation",
+    "finding": "difference = \u03a3(effect_ref_lookup \u00d7 weight \u00d7 2)"
+  },
+  "variant-6": {
+    "section": "Variant-Level Investigation",
+    "title": "Construction Method Comparison",
+    "finding": "Score construction method (PRS-CSx vs LDpred) doesn't predict bias"
+  },
+  "variant-7": {
+    "section": "Variant-Level Investigation",
+    "title": "Ref Lookup Rate Comparison",
+    "finding": "Ref lookup rates are similar (~50%) across all scores",
+    "figure": "figures/ref_lookup_rate_comparison.png"
+  },
+  "variant-8": {
+    "section": "Variant-Level Investigation",
+    "title": "Recommendations",
+    "finding": "Use PGS004237 (CAD) over PGS004696 (CHD) for WGS reliability"
+  },
+  "clinical-1": {
+    "section": "Clinical Implications",
+    "title": "Risk Stratification Example",
+    "finding": "Rowen CHD: VCF-only suggests protective, adjusted shows elevated risk",
+    "table": null
+  },
+  "clinical-2": {
+    "section": "Clinical Implications",
+    "title": "Clinical Summary Table",
+    "finding": "2 scores show sign reversal, 4 show >50% bias, only 4 show minimal bias",
+    "table": "Table 4: Clinical Summary"
+  },
+  "rowen-ancestry-1": {
+    "section": "Legacy WGS Ancestry",
+    "title": "Load Rowen Ancestry Data (HGDP+1000G)",
+    "finding": "Rowen classified as MID (41%), EUR (37%) with Low Confidence using HGDP+1000G panel (previous 1000G-only showed EUR 75%)",
+    "table": null
+  },
+  "rowen-ancestry-2": {
+    "section": "Legacy WGS Ancestry",
+    "title": "Ancestry Composition Comparison (Same Reference)",
+    "finding": "Both show substantial MID ancestry: Rowen MID 41%/EUR 37%, Trent EUR 45%/MID 32% - both Low Confidence due to admixture",
+    "figure": "figures/rowen_vs_trent_ancestry.png"
+  },
+  "rowen-ancestry-3": {
+    "section": "Legacy WGS Ancestry",
+    "title": "PCA Projection Comparison",
+    "finding": "Both samples show EUR-MID admixture pattern; reference panel choice revealed hidden MID ancestry",
+    "figure": "figures/trent_vs_rowen_pca.png"
+  },
+  "rowen-ancestry-4": {
+    "section": "Legacy WGS Ancestry",
+    "title": "Ancestry-Normalized Percentiles",
+    "finding": "Percentiles normalized within EUR but still affected by VCF bias in reference panel",
+    "table": null
+  }
+}

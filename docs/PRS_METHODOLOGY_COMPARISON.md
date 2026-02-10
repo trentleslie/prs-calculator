@@ -244,6 +244,65 @@ Position NOT in VCF
 
 ---
 
+## ⚠️ Systematic Bias in pgsc_calc for WGS Data
+
+### Executive Summary
+
+pgsc_calc produces **systematically biased results** when applied to WGS data in standard VCF format. The bias magnitude varies from 0.6% to 93% depending on PGS construction methodology.
+
+### The Problem
+
+Standard VCF files contain only positions that **differ** from the reference genome:
+- Heterozygous sites (REF/ALT) ✅ In VCF
+- Homozygous alternate sites (ALT/ALT) ✅ In VCF
+- Homozygous reference sites (REF/REF) ❌ **NOT in VCF**
+
+When the effect allele IS the reference allele at a homozygous reference position:
+
+| What pgsc_calc Does | What It Should Do |
+|---------------------|-------------------|
+| Position not in VCF → skip (dosage=0) | Position not in VCF → lookup reference allele |
+| | If REF = effect allele → dosage = 2 |
+| | If REF ≠ effect allele → dosage = 0 |
+
+### Empirical Evidence
+
+Analysis by Lee Rowen (January 2026) quantified the bias across several PGS scores:
+
+| PGS ID | Trait | Hom-Ref Sites | REF as Effect | Net Contribution | Bias |
+|--------|-------|---------------|---------------|------------------|------|
+| PGS001355 | CAD | 51.8% | 2.6% | -0.0136 | +4.25% |
+| PGS005236 | CAD pathway | 51.8% | 2.6% | -0.0021 | +0.59% |
+| **PGS005229** | **Frailty** | **66.5%** | **100%** | **-0.8425** | **+93.27%** |
+
+### Why PGS005229 Has 93% Bias
+
+This Frailty score uses **systematic protective allele orientation**:
+
+1. Common/ancestral alleles chosen as protective effects
+2. Evolutionary logic: harmful variants are rare, protective variants become common
+3. Common alleles → become reference genome alleles
+4. Result: 100% of homozygous reference sites have REF as the effect allele
+5. pgsc_calc misses 66.5% of the score's contribution
+
+**Critical Case**: PGS005229 shifts from 18th percentile (protected) to 48th percentile (average) - completely invalidating the clinical interpretation.
+
+### The Bias Formula
+
+```
+Bias = Σ(2 × weight) for all missed homozygous reference effect alleles
+Relative bias (%) = (Bias / Correct_PGS) × 100
+```
+
+### Recommendations
+
+1. **For WGS data**: Use reference genome lookup (custom script approach)
+2. **For imputed array data**: pgsc_calc works correctly
+3. **Check PGS construction**: Scores with systematic REF-as-protective orientation have severe bias
+4. **Validate coverage**: If pgsc_calc reports <60% variant coverage, investigate
+
+---
+
 ## Ancestry Normalization
 
 ### Why It Matters

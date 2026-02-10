@@ -314,6 +314,25 @@ nextflow run ashenfernando1/pgsc_calc \
 
 **Note**: This issue does **not** affect local Docker/Conda runs. Our single-sample WGS workflow runs successfully on local machines.
 
+### Systematic Bias with WGS VCF Data
+
+**Cause**: pgsc_calc excludes homozygous reference sites, which are not present in standard VCF files. When the effect allele IS the reference allele at these sites, the contribution is incorrectly assigned dosage=0 instead of dosage=2.
+
+**Impact**: Bias ranges from 0.6% to 93% depending on PGS construction:
+- Low bias (0.6-5%): Mixed effect allele orientation (e.g., PGS001355 CAD at +4.25%)
+- **Severe bias (>90%)**: Systematic REF-as-protective orientation (e.g., PGS005229 Frailty at +93.27%)
+
+**Example**: PGS005229 (Frailty) shifts from 18th percentile to 48th percentile - completely invalidating clinical interpretation.
+
+**Solution**: Use the custom script with reference genome lookup for accurate WGS scoring:
+
+```bash
+# Custom script produces correct results by looking up reference alleles
+python pgs_calculator.py --vcf your.vcf.gz --reference hg38.fa --pgs-id PGS002308
+```
+
+**Details**: See [PRS_METHODOLOGY_COMPARISON.md](PRS_METHODOLOGY_COMPARISON.md#️-systematic-bias-in-pgsc_calc-for-wgs-data)
+
 ---
 
 ## Example: Full Workflow
