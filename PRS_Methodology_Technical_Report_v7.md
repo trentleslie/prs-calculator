@@ -326,15 +326,3 @@ Reference panel choice is not just a technical detail—it fundamentally affects
 | 11 | Rowen CHD Sign Flip | `figures/rowan_chd_sign_flip.png` |
 | 12 | Ancestry Composition | `figures/rowen_vs_trent_ancestry.png` |
 | 13 | PCA Projection | `figures/trent_vs_rowen_pca.png` |
-
----
-
-## Citation
-
-If using this methodology or findings, please cite:
-
-> Leslie, T. (2026). Systematic Bias in Whole Genome Sequencing-Based Polygenic Risk Score Calculations. PRS Methodology Technical Report v7.
-
----
-
-*Report generated with assistance from Claude Opus 4.5*
